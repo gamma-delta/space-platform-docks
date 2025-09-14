@@ -203,18 +203,23 @@ end
 local function make_whole_gui(evt)
   if evt.gui_type ~= defines.gui_type.entity
       or not evt.entity
-      or evt.entity.name ~= "pkspd-platform-dock"
+      or (
+        evt.entity.name ~= "pkspd-platform-dock-cover-horizontal"
+        and evt.entity.name ~= "pkspd-platform-dock-cover-vertical"
+      )
   then
     return
   end
+
   local player = game.get_player(evt.player_index)
   if not player then return end
 
-  local dock = evt.entity
-  local dock_info = linklib.dock_info(dock)
+  local dock_info = linklib.dock_info(evt.entity)
 
   local main_frame = ui_lib.new_main_frame(
-    player, "pkspd_dock", dock.prototype.localised_name, {tid = dock.unit_number}
+    player, "pkspd_dock",
+    dock_info.dock.prototype.localised_name,
+    {tid = dock_info.dock.unit_number}
   )
 
   local main_content = main_frame.add{
@@ -228,7 +233,7 @@ local function make_whole_gui(evt)
     style="two_module_spacing_vertical_flow"
   }
   extra["status_wrapper"] = status_wrap
-  make_dock_status(status_wrap, dock)
+  make_dock_status(status_wrap, dock_info.dock)
 
   main_content.add{type="line"}
 

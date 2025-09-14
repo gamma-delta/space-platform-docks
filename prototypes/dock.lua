@@ -30,7 +30,8 @@ data:extend{
       "placeable-neutral", "placeable-player", "player-creation",
       "get-by-unit-number",
     },
-    minable = {mining_time = 1.0, result = "pkspd-platform-dock"},
+    -- Covered up by pkspd-platform-dock-cover-*
+    selectable_in_game = false,
     -- The default direction is north
     selection_box = {{-5, -3}, {5, 3}},
     collision_box = {{-5, -3}, {5, 3}},
@@ -106,9 +107,6 @@ data:extend{
       }),
     },
 
-    circuit_wire_max_distance = default_circuit_wire_max_distance,
-    circuit_connector = dock_aux.circuit_connectors,
-
     -- graphics_set = dock_aux.graphics,
     integration_patch = dock_aux.graphics,
     open_sound = sounds.metal_large_open,
@@ -124,6 +122,6 @@ data:extend{
     crafting_speed = 1,
     source_inventory_size = 1,
     result_inventory_size = 1,
-  }
+  },
 }
 

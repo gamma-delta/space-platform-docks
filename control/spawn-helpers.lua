@@ -60,18 +60,43 @@ local function spawn_helper_entities(evt)
     },
   }))
 
-  -- game.print(
-  --   "Input " .. tostring(belt_in) .. 
-  --   "; output " .. tostring(belt_out) ..
-  --   "; controller " .. tostring(controller))
+  local cover_dir
+  if 
+    entity.direction == defines.direction.north
+    or entity.direction == defines.direction.south
+  then
+    cover_dir = "horizontal"
+  else
+    cover_dir = "vertical"
+  end
+  local cover = entity.surface.create_entity(util.merge({
+    nice_place_params,
+    {
+      name = "pkspd-platform-dock-cover-" .. cover_dir,
+      position = entity.position
+    }
+  }))
+
+  game.print(
+    "Input " .. tostring(belt_in) .. 
+    "; output " .. tostring(belt_out) ..
+    "; controller " .. tostring(controller) ..
+    "; cover " .. tostring(cover))
 
   local dock_info = linklib.dock_info(entity)
   dock_info["mode"] = "manual"
 end
 
+-- this is called on the lab
 local function remove_dock(evt)
   local entity = evt.entity
-  if not entity.valid or entity.name ~= "pkspd-platform-dock" then
+  if 
+    not entity.valid
+    or (
+      entity.name ~= "pkspd-platform-dock-cover-horizontal"
+      and entity.name ~= "pkspd-platform-dock-cover-horizontal"
+    )
+  then
     return
   end
 
@@ -79,7 +104,7 @@ local function remove_dock(evt)
 
   local helpers = linklib.find_helpers(entity)
   for _ty,helper in pairs(helpers) do
-    -- game.print("Killing " .. tostring(helper))
+    game.print("Killing " .. tostring(helper))
 
     if helper.name == "pkspd-linked-belt" then
       -- Give back any items stuck in the middle

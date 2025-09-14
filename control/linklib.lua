@@ -172,16 +172,27 @@ linklib.find_linkable_docks = function(dock)
   return out
 end
 
+-- You can call this on either the dock or the cover
+-- everything else is called on the dock!!
 linklib.find_helpers = function(dock)
   if not dock.valid then error("Dock was invalid") end
-  if dock.name ~= "pkspd-platform-dock" then
-    error("Only call find_helpers on platform docks, instead got " .. tostring(dock))
+  if 
+    dock.name ~= "pkspd-platform-dock"
+    and dock.name ~= "pkspd-platform-dock-cover-horizontal"
+    and dock.name ~= "pkspd-platform-dock-cover-vertical"
+  then
+    error("Only call find_helpers on platform docks or covers, instead got " .. tostring(dock))
   end
 
   local out = {}
   local helpers = dock.surface.find_entities_filtered{
     area = dock.bounding_box,
-    name = {"pkspd-linked-belt", "pkspd-dock-circuit-bridge"}
+    name = {
+      "pkspd-platform-dock",
+      "pkspd-linked-belt", "pkspd-dock-circuit-bridge",
+      "pkspd-platform-dock-cover-horizontal",
+      "pkspd-platform-dock-cover-vertical",
+    }
   }
   for _,helper in ipairs(helpers) do
     if helper.name == "pkspd-linked-belt" then
@@ -192,6 +203,10 @@ linklib.find_helpers = function(dock)
       end
     elseif helper.name == "pkspd-dock-circuit-bridge" then
       out.circuit_bridge = helper
+    elseif helper.name == "pkspd-platform-dock" then
+      out.dock = helper
+    else
+      out.cover = helper
     end
   end
 
